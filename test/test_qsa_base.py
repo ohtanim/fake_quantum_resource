@@ -131,7 +131,18 @@ class QSASTestBase(unittest.TestCase, ABC):
         service_method(job)
         if wait_completion:
             while (job_status := self.service.job_status(job))["status"] == "Running":
+                assert "metrics" in job
+                assert "timestamps" in job["metrics"]
+                assert "created" in job["metrics"]["timestamps"]
                 time.sleep(0.5)
+
+            assert "metrics" in job
+            assert "timestamps" in job["metrics"]
+            if job["status"] == "Completed":
+                assert "circuits_execution_time_ns" in job["metrics"]
+            assert "created" in job["metrics"]["timestamps"]
+            assert "finished" in job["metrics"]["timestamps"]
+
             if job_status["status"] != "Completed":
                 details = (
                     job_status["details"]
@@ -144,7 +155,7 @@ class QSASTestBase(unittest.TestCase, ABC):
             job_status = self.service.job_status(job)
             if job_status["status"] == "Running":
                 return job, None
-            elif job_status["status"] != "Completed":
+            if job_status["status"] != "Completed":
                 details = (
                     job_status["details"]
                     if "details" in job_status

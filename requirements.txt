@@ -1,5 +1,6 @@
 PyYAML~=6.0
 uvicorn[standard]
+httpx2
 fastapi[standard]
 qiskit-aer>=0.17.1
 qiskit_ibm_runtime>=0.40.1
