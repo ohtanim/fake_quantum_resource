@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# (C) Copyright IBM 2024-2026. All Rights Reserved.
+# (C) Copyright 2024, 2025 IBM. All Rights Reserved.
 #
 # This code is licensed under the Apache License, Version 2.0. You may
 # obtain a copy of this license in the LICENSE.txt file in the root directory
@@ -506,10 +506,18 @@ class QSAService:
                 job["created_time"] = (
                     dt.datetime.now(dt.timezone.utc).isoformat().replace("+00:00", "Z")
                 )
+                job["metrics"] = {}
+                job["metrics"]["timestamps"] = {}
+                job["metrics"]["timestamps"]["created"] = job["created_time"]
             if status in ["Completed", "Failed", "Cancelled"]:
                 job["end_time"] = (
                     dt.datetime.now(dt.timezone.utc).isoformat().replace("+00:00", "Z")
                 )
+                job["metrics"]["timestamps"]["finished"] = job["end_time"]
+                if "usage" in job and "quantum_nanoseconds" in job["usage"]:
+                    job["metrics"]["circuits_execution_time_ns"] = job["usage"][
+                        "quantum_nanoseconds"
+                    ]
             if reason_message:
                 job["reason_message"] = reason_message
             if reason_code:

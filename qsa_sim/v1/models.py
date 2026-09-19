@@ -714,6 +714,33 @@ class Usage(BaseModel):
     )
 
 
+class Timestamps(BaseModel):
+    """Job lifecycle timestamps."""
+
+    created: str = Field(
+        description="Time when the job was created.",
+    )
+
+    finished: str = Field(
+        default=None,
+        description="Time when the job reached a terminal status.",
+    )
+
+
+class Metrics(BaseModel):
+    """Job execution metrics."""
+
+    circuits_execution_time_ns: int = Field(
+        default=None,
+        description="Total circuits execution time on QPU in nanoseconds.",
+    )
+
+    timestamps: Timestamps = Field(
+        default=None,
+        description="Job lifecycle timestamps.",
+    )
+
+
 class JobResponse(BaseModel):
     """Response of GET /v1/jobs/{job_id}"""
 
@@ -732,6 +759,11 @@ class JobResponse(BaseModel):
     log_level: Literal["debug", "info", "warning", "error", "critical"] = Field(
         default=None,
         description="Logging level of the program.",
+    )
+
+    metrics: Metrics = Field(
+        default=None,
+        description="Job execution metrics.",
     )
 
     # pylint: disable=invalid-name
