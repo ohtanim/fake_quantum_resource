@@ -1,0 +1,77 @@
+# (C) Copyright 2024-2026 IBM. All Rights Reserved.
+#
+# This code is licensed under the Apache License, Version 2.0. You may
+# obtain a copy of this license in the LICENSE.txt file in the root directory
+# of this source tree or at http://www.apache.org/licenses/LICENSE-2.0.
+#
+# Any modifications or derivative works of this code must retain this
+# copyright notice, and modified files need to carry a notice indicating
+# that they have been altered from the originals.
+
+[build-system]
+requires = ["setuptools>=77.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "qsa-sim"
+description = "IBM Quantum System API Simulator"
+readme = "README.md"
+requires-python = ">=3.11"
+license = "Apache-2.0"
+license-files = ["LICENSE", "LICENSE.txt"]
+authors = [{ name = "IBM Quantum", email = "qiskit@us.ibm.com" }]
+keywords = ["quantum"]
+classifiers = [
+    "Environment :: Console",
+    "Intended Audience :: Developers",
+    "Intended Audience :: Science/Research",
+    "Operating System :: Microsoft :: Windows",
+    "Operating System :: MacOS",
+    "Operating System :: POSIX :: Linux",
+    "Programming Language :: Python :: 3 :: Only",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: 3.14",
+    "Topic :: Scientific/Engineering",
+]
+dynamic = ["version", "dependencies"]
+
+[project.optional-dependencies]
+# Style and Lint: Following Qiskit 1.2
+dev = [
+    "black[jupyter]>=26.3.1",
+    "ruff==0.0.267",
+    "pylint==3.2.3",
+    "pytest>=9",
+]
+
+[project.urls]
+Homepage = "https://quantum.ibm.com/"
+Repository = "https://github.com/qrmi-community/simulated_quantum_resource"
+Documentation = "https://github.com/qrmi-community/simulated_quantum_resource/blob/main/docs/simulator/README.md"
+"API Reference" = "https://quantum.cloud.ibm.com/docs/en/api/quantum-system-rest"
+Issues = "https://github.com/qrmi-community/simulated_quantum_resource/issues"
+
+[project.scripts]
+qsa_sim = "qsa_sim.app:main"
+
+[tool.setuptools.dynamic]
+version = { file = "VERSION.txt" }
+dependencies = { file = ["requirements.txt"] }
+
+[tool.setuptools.packages.find]
+include = ["qsa_sim*"]
+
+[tool.setuptools.package-data]
+qsa_sim = ["logging.yaml"]
+
+[tool.pytest]
+filterwarnings = [
+    # anyio >= 4.14 deprecates the anyio.abc.BlockingPortal alias that
+    # starlette's testclient still imports at module level, which turns
+    # every tests/api collection into an error.  Fixed on starlette main
+    # (Kludex/starlette#3497) but not in any release as of 1.6.0; drop
+    # this filter and bump the starlette floor once it ships.
+    "ignore:The anyio.abc.BlockingPortal alias is deprecated:DeprecationWarning",
+]
